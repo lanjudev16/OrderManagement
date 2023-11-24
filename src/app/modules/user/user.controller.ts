@@ -40,7 +40,73 @@ const getUser = async (req: Request, res: Response) => {
   }
 };
 //get single user from controller
+const getSingleUser = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+    const result = await userServices.getSingleUserFromDB(id);
+    res.json({
+      success: true,
+      message: 'User fetched successfully!',
+      data: result,
+    });
+  } catch (error) {
+    res.json({
+      success: false,
+      message: 'User not found',
+      error: {
+        code: 404,
+        description: error,
+      },
+    });
+  }
+};
+//update user controller
+const updateUser = async (req: Request, res: Response) => {
+  try {
+    const userData = req.body;
+    const id = req.params.id;
+    const result = await userServices.updateSingleUserFromDB(id, userData);
+    res.status(200).json({
+      status: 'success',
+      message: 'User updated successfully',
+      data: result,
+    });
+  } catch (error) {
+    res.json({
+      success: false,
+      message: 'User not found',
+      error: {
+        code: 404,
+        description: error,
+      },
+    });
+  }
+};
+//Delete user controller
+const deleteUser = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+    const result = await userServices.deleteSingleUserFromDB(id);
+    res.json({
+      success: true,
+      message: 'User Delete successfully!',
+      data: result,
+    });
+  } catch (error) {
+    res.json({
+      success: false,
+      message: 'User not found',
+      error: {
+        code: 404,
+        description: error,
+      },
+    });
+  }
+};
 export const userController = {
   createUser,
   getUser,
+  getSingleUser,
+  updateUser,
+  deleteUser,
 };

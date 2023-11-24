@@ -10,4 +10,7 @@ app.get('/', (req: Request, res: Response) => {
 });
 app.use('/api', userRoutes);
 app.use('/api', userRoutes);
+app.use('/api', userRoutes);
+app.use('/api', userRoutes);
+app.use('/api', userRoutes);
 export default app;

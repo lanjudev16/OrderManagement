@@ -59,8 +59,13 @@ const userSchema = new Schema<TUser>({
     required: true,
     default: true,
   },
-  hobbies: [String],
-  orders: [ordersSchema],
+  hobbies: {
+    type: [String],
+    required: true,
+  },
+  orders: {
+    type: [ordersSchema],
+  },
 });
 
 export const UserModel = model<TUser>('User', userSchema);

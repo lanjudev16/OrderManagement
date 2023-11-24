@@ -1,23 +1,23 @@
 import { Request, Response } from 'express';
 import { userServices } from './user.services';
+import { userValidateSchema } from './user.validate';
 //create new user
 const createUser = async (req: Request, res: Response) => {
-  try {
-    const data = req.body;
-
-    const result = await userServices.createUserIntoDb(data);
-    res.json({
-      success: true,
-      message: 'User created successfully!',
-      data: result,
-    });
-  } catch (error) {
+  const data = req.body;
+  const { error, value } = userValidateSchema.validate(data);
+  if (error) {
     res.json({
       success: false,
       message: 'User do not created',
       data: error,
     });
   }
+  const result = await userServices.createUserIntoDb(value);
+  res.json({
+    success: true,
+    message: 'User created successfully!',
+    data: result,
+  });
 };
 //get all user controller
 const getUser = async (req: Request, res: Response) => {
@@ -43,6 +43,7 @@ const getUser = async (req: Request, res: Response) => {
 const getSingleUser = async (req: Request, res: Response) => {
   try {
     const id = req.params.id;
+
     const result = await userServices.getSingleUserFromDB(id);
     res.json({
       success: true,

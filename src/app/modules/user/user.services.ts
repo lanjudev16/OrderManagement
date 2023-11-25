@@ -66,10 +66,11 @@ const AddNewProductIntoDb = async (
   if (!user) {
     return 'User not found';
   }
-  if (user.orders) {
-    user?.orders.push(userData);
+  const singleUser = await UserModel.findOne({ userId: id });
+  if (singleUser?.orders) {
+    singleUser?.orders.push(userData);
   }
-  const result = await userObj.save();
+  const result = await userObj.updateOne({ userId: id }, singleUser);
   return result;
 };
 export const userServices = {

@@ -4,15 +4,16 @@ import { userValidateSchema } from './user.validate';
 //create new user
 const createUser = async (req: Request, res: Response) => {
   const data = req.body;
-  const { error, value } = userValidateSchema.validate(data);
+  const { error } = userValidateSchema.validate(data);
   if (error) {
     res.json({
       success: false,
-      message: 'User do not created',
+      message: error.message || 'User do not created',
       data: error,
     });
   }
-  const result = await userServices.createUserIntoDb(value);
+
+  const result = await userServices.createUserIntoDb(data);
   res.json({
     success: true,
     message: 'User created successfully!',
@@ -87,11 +88,11 @@ const updateUser = async (req: Request, res: Response) => {
 const deleteUser = async (req: Request, res: Response) => {
   try {
     const id = req.params.id;
-    const result = await userServices.deleteSingleUserFromDB(id);
+    await userServices.deleteSingleUserFromDB(id);
     res.json({
       success: true,
       message: 'User Delete successfully!',
-      data: result,
+      data: null,
     });
   } catch (error) {
     res.json({
@@ -104,10 +105,22 @@ const deleteUser = async (req: Request, res: Response) => {
     });
   }
 };
+//create new order
+const newProductAdding = async (req: Request, res: Response) => {
+  const id = req.params.id;
+  const orderData = req.body;
+  const result = await userServices.AddNewProductIntoDb(orderData, Number(id));
+  res.json({
+    success: true,
+    message: 'Order successfully!',
+    data: result,
+  });
+};
 export const userController = {
   createUser,
   getUser,
   getSingleUser,
   updateUser,
   deleteUser,
+  newProductAdding,
 };

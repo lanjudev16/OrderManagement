@@ -1,5 +1,12 @@
 import { Schema, model } from 'mongoose';
-import { TAdress, TFullName, TOrders, TUser } from './user.interface';
+import {
+  TAdress,
+  TFullName,
+  TOrders,
+  TUser,
+  TUserMethods,
+  TUserModel,
+} from './user.interface';
 import bcrypt from 'bcrypt';
 import config from '../../config';
 const addressSchema = new Schema<TAdress>({
@@ -25,7 +32,8 @@ const ordersSchema = new Schema<TOrders>({
     required: true,
   },
 });
-const userSchema = new Schema<TUser>({
+
+const userSchema = new Schema<TUser, TUserModel, TUserMethods>({
   userId: {
     type: Number,
     required: [true, 'UserId is required'],
@@ -69,6 +77,7 @@ const userSchema = new Schema<TUser>({
     type: [ordersSchema],
   },
 });
+
 userSchema.pre('save', async function (next) {
   // eslint-disable-next-line @typescript-eslint/no-this-alias
   const user = this;
@@ -82,4 +91,14 @@ userSchema.post('save', async function (doc, next) {
   doc.password = '';
   next();
 });
-export const UserModel = model<TUser>('User', userSchema);
+
+userSchema.methods.isUserExists = async (id: number) => {
+  const ExistingUser = await UserModel.findOne({ userId: id });
+  return ExistingUser;
+};
+userSchema.methods.isOrderExists = async (id: number) => {
+  const exitsOrder = await UserModel.findOne({ userId: id });
+  return exitsOrder;
+};
+
+export const UserModel = model<TUser, TUserModel>('User', userSchema);
